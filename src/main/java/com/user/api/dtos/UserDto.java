@@ -5,6 +5,12 @@ import javax.validation.constraints.NotBlank;
 
 public class UserDto {
 
+  public UserDto(final String name, final String mobileNo, final String email) {
+    this.name = name;
+    this.mobileNo = mobileNo;
+    this.email = email;
+  }
+
   @NotBlank(message = "name can't be blank")
   private String name;
 
