@@ -3,8 +3,11 @@ package com.user.api.services;
 
 import com.user.api.dtos.UserDto;
 import com.user.api.entity.User;
+import com.user.api.exceptions.ResourceNotFoundException;
 import com.user.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,5 +29,12 @@ public class UserService {
     user.setMobileNo(userDto.getMobileNo());
 
     return userRepository.save(user);
+  }
+
+  public ResponseEntity<User> getUserById(final Long userId) throws ResourceNotFoundException {
+
+    User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Not found user with id =" + userId));
+
+    return new ResponseEntity<>(user, HttpStatus.OK);
   }
 }

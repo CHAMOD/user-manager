@@ -23,6 +23,13 @@ public class User {
     this.name = name;
   }
 
+  public User(final long id, final String name, final String mobileNo, final String email) {
+    this.id = id;
+    this.name = name;
+    this.mobileNo = mobileNo;
+    this.email = email;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public long getId() {
