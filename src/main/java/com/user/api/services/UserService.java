@@ -1,6 +1,9 @@
 package com.user.api.services;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.user.api.dtos.UserDto;
 import com.user.api.entity.User;
 import com.user.api.exceptions.ResourceNotFoundException;
@@ -15,6 +18,7 @@ import java.util.List;
 @Service
 public class UserService {
 
+  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
   @Autowired
   private UserRepository userRepository;
 
@@ -28,12 +32,16 @@ public class UserService {
     user.setEmail(userDto.getEmail());
     user.setMobileNo(userDto.getMobileNo());
 
+    logger.info("user is inserted: ", user);
     return userRepository.save(user);
   }
 
   public ResponseEntity<User> getUserById(final Long userId) throws ResourceNotFoundException {
 
-    User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Not found user with id =" + userId));
+    User user = userRepository.findById(userId).orElseThrow(() -> {
+      logger.warn("user {} is not found", userId);
+      return new ResourceNotFoundException("user is not found with id =" + userId);
+    });
 
     return new ResponseEntity<>(user, HttpStatus.OK);
   }

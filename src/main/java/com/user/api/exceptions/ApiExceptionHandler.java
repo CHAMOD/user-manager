@@ -1,6 +1,9 @@
 
 package com.user.api.exceptions;
 
+import com.user.api.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,8 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+
+  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -35,6 +40,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       errors.toString(),
       request.getDescription(false));
 
+    logger.error("request is failed due to {}", errors);
     return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
   }
 
@@ -50,6 +56,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       new Date(),
       ex.getMessage(),
       request.getDescription(false));
+    logger.error("request is failed due to {}", ex.getMessage());
 
     return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
   }
