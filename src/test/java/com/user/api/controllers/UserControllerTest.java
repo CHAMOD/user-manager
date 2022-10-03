@@ -54,9 +54,9 @@ public class UserControllerTest extends Auth {
   private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
 
-  User RECORD_1 = new User(1, "Test User1", "0711234567", "test1@gmail.com");
-  User RECORD_2 = new User(2, "Test User2", "0711235555", "test2@gmail.com");
-  User RECORD_3 = new User(3, "Test User3", "0711234432", "test3@gmail.com");
+  private final User RECORD_1 = new User(1, "Test User1", "0711234567", "test1@gmail.com");
+  private final User RECORD_2 = new User(2, "Test User2", "0711235555", "test2@gmail.com");
+  private final User RECORD_3 = new User(3, "Test User3", "0711234432", "test3@gmail.com");
 
 
   @Test
@@ -90,11 +90,11 @@ public class UserControllerTest extends Auth {
   public void givenUserId_whenGetUserById_thenReturnUserObject() throws Exception {
     setAuthentication("admin", "password", session);
     // given - precondition or setup
-    long employeeId = 1L;
+    long userId = 1L;
 
-    when(userService.getUserById(employeeId)).thenReturn(new ResponseEntity<>(RECORD_1, HttpStatus.OK));
+    when(userService.getUserById(userId)).thenReturn(new ResponseEntity<>(RECORD_1, HttpStatus.OK));
 
-    ResultActions response = mockMvc.perform(get("/v1/users/userProfile/{id}", employeeId));
+    ResultActions response = mockMvc.perform(get("/v1/users/userProfile/{id}", userId));
 
     // then - verify the output
     response.andExpect(status().isOk())
@@ -110,11 +110,11 @@ public class UserControllerTest extends Auth {
   public void givenListOfUsers_whenGetAllRegisteredUsers_thenReturnUsersList() throws Exception {
     setAuthentication("admin", "password", session);
     // given - precondition or setup
-    List<User> listOfEmployees = new ArrayList<>();
-    listOfEmployees.add(RECORD_1);
-    listOfEmployees.add(RECORD_2);
-    listOfEmployees.add(RECORD_3);
-    given(userService.getAllRegisteredUsers()).willReturn(listOfEmployees);
+    List<User> listOfUsers = new ArrayList<>();
+    listOfUsers.add(RECORD_1);
+    listOfUsers.add(RECORD_2);
+    listOfUsers.add(RECORD_3);
+    given(userService.getAllRegisteredUsers()).willReturn(listOfUsers);
 
     ResultActions response = mockMvc.perform(get("/v1/users/registeredUsers"));
 
@@ -122,13 +122,13 @@ public class UserControllerTest extends Auth {
     response.andExpect(status().isOk())
       .andDo(print())
       .andExpect(jsonPath("$.size()",
-                          is(listOfEmployees.size())));
+                          is(listOfUsers.size())));
 
   }
 
 
   @ParameterizedTest(name = "{0}")
-  @MethodSource("data_validateEventDataBeforeProcessing")
+  @MethodSource("dataToValidate")
   public void whenProvideIncompleteUserToCreateUser_thenReturnSavedUser(final String scenario,
                                                                         final UserDto inputData,
                                                                         final String errorMessage,
@@ -165,35 +165,35 @@ public class UserControllerTest extends Auth {
 
   }
 
-  private static Stream<Arguments> data_validateEventDataBeforeProcessing() {
+  private static Stream<Arguments> dataToValidate() {
 
 
     return Stream.of(arguments("Validation fail when name is empty",
-                               new UserDto("", "0711873018", "ctpathirana@gmail.com"),
+                               new UserDto("", "0711231234", "TestEmail@gmail.com"),
                                "[name can't be blank]",
                                status().isBadRequest(),
                                false
                               ),
                      arguments("Validation fail when email is empty",
-                               new UserDto("Test", "0711873018", ""),
+                               new UserDto("Test", "0711231234", ""),
                                "[email can't be blank]",
                                status().isBadRequest(),
                                false
                               ),
                      arguments("Validation fail when email is invalid",
-                               new UserDto("Test", "0711873018", "Test"),
+                               new UserDto("Test", "0711231234", "Test"),
                                "[invalid format]",
                                status().isBadRequest(),
                                false
                               ),
                      arguments("Validation fail when mobileNo is empty",
-                               new UserDto("Test", "", "ctpathirana@gmail.com"),
+                               new UserDto("Test", "", "TestEmail@gmail.com"),
                                "[mobile number can't be blank]",
                                status().isBadRequest(),
                                false
                               ),
                      arguments("Validation pass when all details are correct",
-                               new UserDto("TestName", "0711873018", "Test@gmail.com"),
+                               new UserDto("TestName", "0711231234", "TestEmail@gmail.com"),
                                "",
                                status().isOk(),
                                true
